@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Amateur Stock Dashboard</title>
+  </head>
+  <body>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Stock Symbol</th>
+          {% for indicator in indicator_header %}
+          <th>{{ indicator }}</th>
+          {% endfor %}
+          <th>Latest Trading Day</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set indicator_map = {} %} {% for stock in stocks %} {% for ind in stock.indicators %} {% set _ =
+        indicator_map.update({ind.indicator_type: ind.value}) %} {% endfor %}
+        <tr>
+          <td>{{ stock.symbol }}</td>
+          {% for indicator in indicator_header %}
+          <td>{{ indicator_map.get(indicator, 'N/A') }}</td>
+          {% endfor %}
+          <td>
+            {{ stock.indicators[0].latest_trading_day if stock.indicators else 'N/A' }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -99,6 +99,30 @@ def add_indicator_to_stock(stock: Stock, indicator_type: str) -> Indicator:
         db.session.rollback()
         return None
 
+def add_indicator_to_all_stocks(indicator_type: str) -> bool:
+    try:
+        stocks = Stock.query.all()
+
+        if not stocks:
+            print("No stocks found in the database.")
+            return False
+
+        # Iterate through each stock and add the indicator
+        for stock in stocks:
+            # Attempt to add the indicator to the current stock
+            if not add_indicator_to_stock(stock, indicator_type):
+                # If adding the indicator fails, log the error
+                print(f"Failed to add indicator {indicator_type} to stock {stock.symbol}.")
+                return False
+
+        # If all indicators were successfully added, return True
+        return True
+
+    except Exception as e:
+        # Catch any unexpected exceptions and log the error
+        print(f"An error occurred while adding indicator {indicator_type} to all stocks: {e}")
+        return False
+
 
 def initialize_sample_data() -> bool:
 

@@ -64,7 +64,7 @@ def add_stock_to_database(symbol: str) -> Stock:
         db.session.rollback()
         return None
 
-def add_indicator_to_database(stock: Stock, indicator_type: str) -> Indicator:
+def add_indicator_to_stock(stock: Stock, indicator_type: str) -> Indicator:
     fundamental_data_result = get_fundamental_data(stock.symbol, indicator_type)
     if fundamental_data_result.error_message is not None:
         print(fundamental_data_result.error_message)
@@ -111,4 +111,4 @@ def initialize_sample_data() -> bool:
             return False
 
         for indicator in indicators:
-            indicator_return = add_indicator_to_database(stock, indicator)
+            indicator_return = add_indicator_to_stock(stock, indicator)

@@ -24,5 +24,40 @@ def index():
     )
 
 
+# Get all stocks - return only the stock symbols
+@app.route("/stocks", methods=["GET"])
+def get_stocks():
+    stocks = Stock.query.all()
+    stock_list = [stock.symbol for stock in stocks]
+    return jsonify(stock_list)
+
+
+# Get all indicators
+@app.route("/indicators", methods=["GET"])
+def get_indicators():
+    indicators = Indicator.query.all()
+    indicator_list = [indicator.indicator_type for indicator in indicators]
+    return jsonify(indicator_list)
+
+
+# Get all information and indicators for a specific stock by symbol
+@app.route("/stocks/<symbol>", methods=["GET"])
+def get_stock_by_symbol(symbol):
+    stock = Stock.query.filter_by(symbol=symbol).first()
+    if not stock:
+        return jsonify({"error": "Stock not found"}), 404
+
+    stock_info = {
+        "id": stock.id,
+        "symbol": stock.symbol,
+        "current_price": stock.current_price,
+    }
+
+    # Add each indicator to the stock_info dictionary
+    for indicator in stock.indicators:
+        stock_info[indicator.indicator_type] = indicator.value
+
+    return jsonify(stock_info)
+
 if __name__ == "__main__":
     app.run()

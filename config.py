@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 from stock_utils.priceFetcher import get_stock_price
 from stock_utils.dataFetcher import get_fundamental_data
+from models import db, Stock, Indicator
 
 load_dotenv()
 
@@ -21,24 +22,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = database_path
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize SQLAlchemy
-db = SQLAlchemy(app)
-
-
-# Define the database models
-class Stock(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    symbol = db.Column(db.String(10), nullable=False)
-    current_price = db.Column(db.Float, nullable=False)
-    indicators = db.relationship("Indicator", backref="stock", lazy=True)
-
-
-class Indicator(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    stock_id = db.Column(db.Integer, db.ForeignKey("stock.id"), nullable=False)
-    indicator_type = db.Column(db.String(50), nullable=False)
-    value = db.Column(db.String(50), nullable=False)
-    latest_trading_day = db.Column(db.String(50), nullable=False)
-
+db.init_app(app)
 
 def setup_db():
     with app.app_context():

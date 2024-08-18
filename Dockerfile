@@ -1,10 +1,5 @@
 FROM postgres:15
 
-# Define build arguments
-ARG POSTGRES_USER
-ARG POSTGRES_PASSWORD
-ARG POSTGRES_DB
-
 # Set environment variables from build arguments
 ENV POSTGRES_USER=${POSTGRES_USER}
 ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -36,5 +31,12 @@ RUN pip install --upgrade pip && \
 COPY init-db.sh /docker-entrypoint-initdb.d/
 RUN chmod +x /docker-entrypoint-initdb.d/init-db.sh
 
+# Copy and set permissions for the entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Expose PostgreSQL port for ease of development and testing
 EXPOSE 5432
+
+# Use the entrypoint script to handle logic and run the application
+ENTRYPOINT ["/entrypoint.sh"]

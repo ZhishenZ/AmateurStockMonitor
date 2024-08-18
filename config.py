@@ -8,10 +8,10 @@ from models import db, Stock, Indicator
 
 load_dotenv()
 
-database_user = os.getenv("DB_USER")
-database_password = os.getenv("DB_PASSWORD")
-database_host = os.getenv("DB_HOST")
-database_name = os.getenv("DB_NAME")
+database_user = os.getenv("POSTGRES_USER")
+database_password = os.getenv("POSTGRES_PASSWORD")
+database_host = os.getenv("POSTGRES_HOST")
+database_name = os.getenv("POSTGRES_DB")
 database_path = (
     f"postgresql://{database_user}:{database_password}@{database_host}/{database_name}"
 )

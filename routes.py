@@ -1,4 +1,5 @@
 from flask import render_template, jsonify, request
+from authentication.auth import AuthError, requires_auth
 from config import (
     Stock,
     Indicator,
@@ -212,7 +213,7 @@ def update_stock(symbol):
             500,
         )
 
-
+# for unit test without authentication
 def register_routes(app):
     app.route("/")(index)
     app.route("/stocks", methods=["GET"])(get_stocks)
@@ -223,3 +224,27 @@ def register_routes(app):
     app.route("/stocks/<symbol>", methods=["PATCH"])(update_stock)
     app.route("/indicators/<indicator_type>", methods=["DELETE"])(delete_indicator)
     app.route("/stocks/<symbol>", methods=["DELETE"])(delete_stock)
+
+def register_routes_auth(app):
+    app.route("/", endpoint='index')(index)
+    app.route("/stocks", methods=["GET"], endpoint='get_stocks')(get_stocks)
+    app.route("/indicators", methods=["GET"], endpoint='get_indicators')(get_indicators)
+
+    app.route("/stocks/<symbol>", methods=["GET"], endpoint='get_stock_by_symbol')(
+        requires_auth("get:stocks")(get_stock_by_symbol)
+    )
+    app.route("/indicators", methods=["POST"], endpoint='add_indicator')(
+        requires_auth("post:indicators")(add_indicator)
+    )
+    app.route("/stocks", methods=["POST"], endpoint='add_stock')(
+        requires_auth("post:stocks")(add_stock)
+    )
+    app.route("/stocks/<symbol>", methods=["PATCH"], endpoint='update_stock')(
+        requires_auth("patch:stocks")(update_stock)
+    )
+    app.route("/indicators/<indicator_type>", methods=["DELETE"], endpoint='delete_indicator')(
+        requires_auth("delete:indicators")(delete_indicator)
+    )
+    app.route("/stocks/<symbol>", methods=["DELETE"], endpoint='delete_stock')(
+        requires_auth("delete:stocks")(delete_stock)
+    )
